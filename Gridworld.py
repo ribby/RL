@@ -35,14 +35,31 @@ def adj_val(mat, i, j):
         down = mat[i+1,j]
     return [left, right, up, down]
 
-def update_val(mat,i,j):    
+def update_val(mat):    
     # Assigning values
     temp = mat.copy()
-    mat[i,j] = 0.25*(-4 + adj_val(temp,i,j)[0] + adj_val(temp,i,j)[1] + adj_val(temp,i,j)[2] + adj_val(temp,i,j)[3])
-    j += 1
-    mat[i,j] = 0.25*(-4 + adj_val(temp,i,j)[0] + adj_val(temp,i,j)[1] + adj_val(temp,i,j)[2] + adj_val(temp,i,j)[3])
+    i = 0
+    j = 1
+    # First row
+    while j < 5:
+        mat[i,j] = 0.25*(-4 + adj_val(temp,i,j)[0] + adj_val(temp,i,j)[1] + adj_val(temp,i,j)[2] + adj_val(temp,i,j)[3])
+        j += 1
+    i += 1
+    # Middle rows
+    while i < 4:
+        j = 0
+        while j < 5:
+            mat[i,j] = 0.25*(-4 + adj_val(temp,i,j)[0] + adj_val(temp,i,j)[1] + adj_val(temp,i,j)[2] + adj_val(temp,i,j)[3])
+            j += 1
+        i += 1
+    # Last row
+    j = 0
+    while j < 4:
+        mat[i,j] = 0.25*(-4 + adj_val(temp,i,j)[0] + adj_val(temp,i,j)[1] + adj_val(temp,i,j)[2] + adj_val(temp,i,j)[3])
+        j += 1
     return mat
     
-print update_val(values, 0, 1)
+print update_val(values)
+print update_val(values)
 
 
