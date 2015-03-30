@@ -8,12 +8,41 @@ Created on Thu Mar 26 22:36:29 2015
 # Imports
 import numpy as np
 
-#grid = np.zeros((5,5))
+# Initial value matrix
 a = np.arange(25).reshape(5,5)
 values = np.zeros([5,5])
 
-temp = values.copy() # COPY IS THE ANSWER
-values[0,0] += 1
-print temp is values
-print values
-print temp
+i = 0
+j = 1
+
+def adj_val(mat, i, j):
+    # Getting adjacent values of single element
+    if j == 0:
+        left = mat[i,j]
+    else:
+        left = mat[i,j-1]
+    if j == 4:
+        right = mat[i,j]
+    else:
+        right = mat[i,j+1]
+    if i == 0:
+        up = mat[i,j]
+    else:
+        up = mat[i-1,j]
+    if i == 4:
+        down = mat[i,j]
+    else:
+        down = mat[i+1,j]
+    return [left, right, up, down]
+
+def update_val(mat,i,j):    
+    # Assigning values
+    temp = mat.copy()
+    mat[i,j] = 0.25*(-4 + adj_val(temp,i,j)[0] + adj_val(temp,i,j)[1] + adj_val(temp,i,j)[2] + adj_val(temp,i,j)[3])
+    j += 1
+    mat[i,j] = 0.25*(-4 + adj_val(temp,i,j)[0] + adj_val(temp,i,j)[1] + adj_val(temp,i,j)[2] + adj_val(temp,i,j)[3])
+    return mat
+    
+print update_val(values, 0, 1)
+
+
