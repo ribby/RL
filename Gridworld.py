@@ -17,27 +17,30 @@ print values
 i = 0
 j = 1
 temp = values
-while j < 5:
-    if j == 0:
-        left = temp[i,j]
-    else: 
-        left = temp[i,j-1]
-    if j == 4:
-        right = temp[i,j]
-    else:
-        right = temp[i,j+1]
-    if i == 0:
-        up = temp[i,j]
-    else:
-        up = temp[i-1,j]
-    if i == 4:
-        down = temp[i,j]
-    else:
-        down = temp[i+1,j]
-    print left, right, up, down
-    values[i,j] = 0.25*(-4 + left + right + up + down)
-    j += 1
+
+if j == 0:
+    left = temp[i,j]
+else: 
+    left = temp[i,j-1]
+if j == 4:
+    right = temp[i,j]
+else:
+    right = temp[i,j+1]
+if i == 0:
+    up = temp[i,j]
+else:
+    up = temp[i-1,j]
+if i == 4:
+    down = temp[i,j]
+else:
+    down = temp[i+1,j]
+print left, right, up, down
+values[i,j] = 0.25*(-4 + left + right + up + down)
 print values
+print temp
+
+j += 1
+
 #==============================================================================
 # i += 1
 # j = 0
