@@ -9,8 +9,8 @@ Solves the gridworld example as given in Sutton & Barto Chapter 4, Section 2
 # Imports
 import numpy as np
 
+a = np.arange(25).reshape(5,5) # Test matrix
 # Initial value matrix
-a = np.arange(25).reshape(5,5)
 values = np.zeros([4,4])
 
 i = 0
