@@ -7,6 +7,8 @@ Created on Sun Apr 12 10:28:09 2015
 KNOWN BUGS:
 * epsilon should be revalued. Currently messy for use in next_action()
 * the way I deal with repeated state-value pairs in next_state() can be improved
+* yet to implement first-visit business
+* need to deal with repetition in next_action
 """
 
 import numpy as np
@@ -15,7 +17,7 @@ import numpy as np
 gamma = 1
 epsilon = 100 # Epsilon effectively equals 0.1%,
 maxEpisodes = 100
-alpha = 0.1
+alpha = 0.5
 stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
@@ -34,8 +36,10 @@ for i in grid:
     for j in i:
         Q[j] = action.copy()
         
-# Define terminal states and directions (to be used when changing states)
-terminal = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
+# Define cliff states and directions (to be used when changing states)
+start_state = 36
+terminal_state = 47
+cliff = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
 direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
 inv_direction = {v: k for k, v in direction.items()}
 
@@ -75,8 +79,8 @@ def next_action(state):
     '''
     global epsilon
     max_action_per_state = []
-    next_state = all_next_states(state)
-    for state in next_state:
+    possible_states = all_next_states(state)
+    for state in possible_states:
         max_action_per_state.append(max(Q[state])) # left, right, up, down
     max_action = max(max_action_per_state) 
     if max_action_per_state.count(max_action) != 1: # If any sort of repetition in state-value pair
@@ -95,6 +99,8 @@ def next_state(state, direction):
     Returns the number of the next state.
     '''
     global grid
+    if state in cliff:
+        return start_state
     if direction == '<':
         if state in grid[:,0]:
             return state
@@ -117,17 +123,17 @@ def next_state(state, direction):
             return state + len(grid[0])
             
 def reward(next_state):
-    global terminal
-    if next_state in terminal:
+    global cliff
+    if next_state in cliff:
         return -100
     else:
         return -1
 
 def update_Q(state,Q):
-    global terminal
+    global cliff
     global gamma
     global alpha
-    if state in terminal:
+    if state == terminal_state:
         Q[state][inv_direction[next_action(state)[1]]] = 0
         return "Done updating!"
     else:
@@ -140,18 +146,20 @@ def main(maxEpisodes):
     maxVisits = 500
     while nEpisodes < maxEpisodes:
         nVisits = 0
-        start_state = np.random.randint(0,48)
+        start_state = 36
         print "The starting state is:", start_state
-        flag = update_Q(start_state,Q)
-        if flag == "Done updating!":
-            print "!!!!!!!!!!!!!!!!!"
-        while flag != "Done updating!" and nVisits < maxVisits:
-            flag = update_Q(flag,Q)
+        state = update_Q(start_state,Q)
+        while state != "Done updating!" and nVisits < maxVisits:
+            state = update_Q(state,Q)
+            print "The state value is", state
             nVisits += 1
         print "The number of visits was", nVisits
         nEpisodes += 1
-main(100)
-print Q
+main(1)
+
+
+# If I run main for ~10 loops, nVisits almost never hits 500.
+# As I go to ~100 loops, it shows up extremely often
 
 #==============================================================================
 # num_action = np.empty(nStates)
