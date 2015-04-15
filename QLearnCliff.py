@@ -84,20 +84,24 @@ def next_action(state):
     for state in possible_states:
         max_action_per_state.append(max(Q[state])) # left, right, up, down
     max_action = max(max_action_per_state) 
-    if max_action_per_state.count(max_action) != 1: # If any sort of repetition in state-value pair
-        indices = [i for i, x in enumerate(max_action_per_state) if x == max_action]        
-        print indices        
-        return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums
     for_direction = max_action_per_state[:] # to be used in else clause for direction
     if np.random.randint(0,100000) > epsilon: # greedy action
-        return [max_action, direction[max_action_per_state.index(max_action)]]
+        if max_action_per_state.count(max_action) != 1: # Case with multiple maxima
+            indices = [i for i, x in enumerate(max_action_per_state) if x == max_action]        
+            return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums
+        else: # Single maxima
+            return [max_action, direction[max_action_per_state.index(max_action)]]
     else: # exploration
         max_action_per_state.remove(max_action)
         non_optimal_action = max_action_per_state[np.random.randint(0,3)]
         return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
 
 Q[37] = [-1, -1, -1, -1]
+test = []
 print next_action(36)
+for i in xrange(10000):
+    test.append(next_action(36)[1])
+print test.count('>')
 #%%
 #==============================================================================
 # def next_state(state, direction):
