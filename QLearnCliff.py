@@ -15,9 +15,8 @@ alpha = 0.1
 
 # Initializing the number of actions. Assuming same number of actions for all state
 nActions = 4
-action = []
-for i in xrange(0,nActions):
-    action.append(0)
+action = np.zeros(nActions,)
+
     
 # Define grid size
 HEIGHT = 4
@@ -29,7 +28,7 @@ grid = np.arange(nStates).reshape([HEIGHT,WIDTH])        # Assigns a number to e
 Q = {}
 for i in grid:
     for j in i:
-        Q[j] = action
+        Q[j] = action.copy()
         
 # Define terminal states
 terminal = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
@@ -65,25 +64,41 @@ def next_states(state):
 def next_action(state):
     global Q
     global epsilon
-    epsilon *= 1000 # Assume epsilon >= 0.001
-    rndm = np.randint(0,100000)
-    if rndm > epsilon:
-        max_action_per_state = []
-        next_state = next_states(state)
-        for state in next_state:
-            max_action_per_state.append(max(Q[state]))
-        max_action = max(max_action_per_state)
+    epsilon *= 1000 # Assume epsilon >= 0.001. Using this as a work around for 
+                                 # random number generation domain
+    max_action_per_state = []
+    next_state = next_states(state)
+    for state in next_state:
+        max_action_per_state.append(max(Q[state])) # left, right, up, down
+    max_action = max(max_action_per_state) 
+    if np.random.randint(0,100000) > epsilon: # greedy action
         return max_action
-    else:
-        break
+    else: # exploration
+        max_action_per_state.remove(max_action)
+        non_optimal_action = max_action_per_state[np.random.randint(0,3)]
+        return non_optimal_action
         
-def update_Q(state,Q,next_state,reward):
-    global terminal
-    global gamma
-    if state in terminal:
-        Q = 0
-    else:
-        Q += alpha * (reward + gamma)
+#==============================================================================
+# def update_Q(state,Q,next_state,reward):
+#     global terminal
+#     global gamma
+#     if state in terminal:
+#         Q = 0
+#     else:
+#         Q += alpha * (reward + gamma)
+#==============================================================================
     
-print Q
-print grid
+
+print Q[14]
+Q[14][0] = 7
+Q[3][2] = 10
+Q[16][3] = 5
+print Q[14]
+test = []
+for i in xrange(1000):
+    test.append(next_action(15))
+
+#==============================================================================
+# for i in xrange(10):
+#     next_action(15)
+#==============================================================================
