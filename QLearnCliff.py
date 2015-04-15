@@ -15,7 +15,7 @@ import numpy as np
 gamma = 1
 epsilon = 100 # Epsilon effectively equals 0.1%,
 maxEpisodes = 100
-alpha = 0.01
+alpha = 0.1
 stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
@@ -135,9 +135,10 @@ def update_Q(state,Q):
     return next_state(state,next_action(state)[1])
 
 def main(maxEpisodes):
+    global Q
     nEpisodes = 0
     maxVisits = 500
-    while nEpisodes < maxEpisodes:
+    while nEpisodes:
         nVisits = 0
         start_state = np.random.randint(0,48)
         print "The starting state is:", start_state
@@ -149,17 +150,25 @@ def main(maxEpisodes):
             nVisits += 1
         print "The number of visits was", nVisits
         nEpisodes += 1
-main(1000)
+main(100)
+print Q
 
-num_action = np.empty(nStates)
-visual_action = np.empty(nStates, np.dtype((str,3)))
-for i in xrange(48):
-    num_action[i] = np.argmax(Q[i])
-    visual_action[i] = direction[num_action[i]]
-visual_action = visual_action.reshape([HEIGHT,WIDTH])
-print visual_action
+#==============================================================================
+# num_action = np.empty(nStates)
+# visual_action = np.empty(nStates, np.dtype((str,3)))
+# for i in xrange(48):
+#     num_action[i] = np.argmax(Q[i])
+#     visual_action[i] = direction[num_action[i]]
+# visual_action = visual_action.reshape([HEIGHT,WIDTH])
+# 
+# QMax = np.empty(nStates)
+# for i in xrange(48):
+#     QMax[i] = max(Q[i])
+#==============================================================================
+#print QMax
 
-    
+
+
 #==============================================================================
 # Q[22][1] = 5
 # print Q[22][inv_direction['>']]
