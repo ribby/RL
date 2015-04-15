@@ -168,30 +168,33 @@ def update_Q(state,Q):
     else:
         Q[state][inv_direction[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][inv_direction[direction]])
         print "The next_state is", next_state(state,direction)
+        
+        
+#==============================================================================
+# update_Q(36,Q)
+# print Q[36]
+# print reward(36, 'v')
+#==============================================================================
 
-update_Q(36,Q)
-print Q[36]
-print reward(36, 'v')
-#==============================================================================
-# def main(maxEpisodes):
-#     global Q
-#     nEpisodes = 0
-#     maxVisits = 10
-#     while nEpisodes < maxEpisodes:
-#         nVisits = 0
-#         start_state = 36
-#         print "The starting state is:", start_state
-#         state = update_Q(start_state,Q)
-#         while state != "Done updating!" and nVisits < maxVisits:
-#             state = update_Q(state,Q)
-#             print "The state value is", state
-#             nVisits += 1
-#         print "The number of visits was", nVisits
-#         nEpisodes += 1
-#==============================================================================
+
+def main(maxEpisodes):
+    global Q
+    global start_state
+    nEpisodes = 0
+    maxVisits = 10
+    while nEpisodes < maxEpisodes:
+        nVisits = 0
+        print "The starting state is:", start_state
+        state = update_Q(start_state,Q)
+        while state != "Done updating!" and nVisits < maxVisits:
+            state = next_state(state,direction)
+            update_Q(state,Q)
+            nVisits += 1
+        print "The number of visits was", nVisits
+        nEpisodes += 1
         
 
-# main(1)
+main(1)
 
 
 # If I run main for ~10 loops, nVisits almost never hits 500.
