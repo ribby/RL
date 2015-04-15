@@ -43,6 +43,8 @@ cliff = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
 direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
 inv_direction = {v: k for k, v in direction.items()}
 
+
+
 def all_next_states(state):
     '''
     Returns all possible next states in the form [left,right,up,down]
@@ -74,8 +76,7 @@ def all_next_states(state):
 def next_action(state):
     '''
     Determines the [value_of_the_next_action, and direction_of_next_action] 
-    using epsilon greedy methods. The way I deal with state-value repetition
-    still needs to be improved.
+    using epsilon greedy methods.
     '''
     global epsilon
     max_action_per_state = []
@@ -84,7 +85,9 @@ def next_action(state):
         max_action_per_state.append(max(Q[state])) # left, right, up, down
     max_action = max(max_action_per_state) 
     if max_action_per_state.count(max_action) != 1: # If any sort of repetition in state-value pair
-        return [max_action, direction[np.random.randint(0,4)]] # pick a completely random direction (super grungy)
+        indices = [i for i, x in enumerate(max_action_per_state) if x == max_action]        
+        print indices        
+        return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums
     for_direction = max_action_per_state[:] # to be used in else clause for direction
     if np.random.randint(0,100000) > epsilon: # greedy action
         return [max_action, direction[max_action_per_state.index(max_action)]]
@@ -92,70 +95,81 @@ def next_action(state):
         max_action_per_state.remove(max_action)
         non_optimal_action = max_action_per_state[np.random.randint(0,3)]
         return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
+
+Q[37] = [-1, -1, -1, -1]
+print next_action(36)
+#%%
+#==============================================================================
+# def next_state(state, direction):
+#     '''
+#     Helper function to be used in defining the next state in update_Q.
+#     Returns the number of the next state.
+#     '''
+#     global grid
+#     if state in cliff:
+#         return start_state
+#     if direction == '<':
+#         if state in grid[:,0]:
+#             return state
+#         else:
+#             return state - 1
+#     if direction == '>':
+#         if state in grid[:,-1]:
+#             return state
+#         else:
+#             return state + 1
+#     if direction == '^':
+#         if state in grid[0]:
+#             return state
+#         else:
+#             return state - len(grid[0])
+#     if direction == 'v':
+#         if state in grid[-1]:
+#             return state
+#         else:
+#             return state + len(grid[0])
+#             
+# def reward(next_state):
+#     global cliff
+#     if next_state in cliff:
+#         return -100
+#     else:
+#         return -1
+# 
+# def update_Q(state,Q):
+#     global cliff
+#     global gamma
+#     global alpha
+#     global terminal_state
+#     new_state = next_state(state,next_action(state)[1])
+#     new_action = inv_direction[next_action(state)[1]]
+#     if state == terminal_state:
+#         Q[state][inv_direction[next_action(state)[1]]] = 0
+#         return "Done updating!"
+#     else:
+#         Q[state][new_action] += alpha*(reward(new_state) + gamma*next_action(state)[0] - Q[state][new_action])
+#==============================================================================
+
+#==============================================================================
+# def main(maxEpisodes):
+#     global Q
+#     nEpisodes = 0
+#     maxVisits = 10
+#     while nEpisodes < maxEpisodes:
+#         nVisits = 0
+#         start_state = 36
+#         print "The starting state is:", start_state
+#         state = update_Q(start_state,Q)
+#         while state != "Done updating!" and nVisits < maxVisits:
+#             state = update_Q(state,Q)
+#             print "The state value is", state
+#             nVisits += 1
+#         print "The number of visits was", nVisits
+#         nEpisodes += 1
+#==============================================================================
         
-def next_state(state, direction):
-    '''
-    Helper function to be used in defining the next state in update_Q.
-    Returns the number of the next state.
-    '''
-    global grid
-    if state in cliff:
-        return start_state
-    if direction == '<':
-        if state in grid[:,0]:
-            return state
-        else:
-            return state - 1
-    if direction == '>':
-        if state in grid[:,-1]:
-            return state
-        else:
-            return state + 1
-    if direction == '^':
-        if state in grid[0]:
-            return state
-        else:
-            return state - len(grid[0])
-    if direction == 'v':
-        if state in grid[-1]:
-            return state
-        else:
-            return state + len(grid[0])
-            
-def reward(next_state):
-    global cliff
-    if next_state in cliff:
-        return -100
-    else:
-        return -1
 
-def update_Q(state,Q):
-    global cliff
-    global gamma
-    global alpha
-    if state == terminal_state:
-        Q[state][inv_direction[next_action(state)[1]]] = 0
-        return "Done updating!"
-    else:
-        Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward(next_state(state,next_action(state)[1])) + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
-    return next_state(state,next_action(state)[1])
-
-def main(maxEpisodes):
-    global Q
-    nEpisodes = 0
-    maxVisits = 500
-    while nEpisodes < maxEpisodes:
-        nVisits = 0
-        start_state = 36
-        print "The starting state is:", start_state
-        state = update_Q(start_state,Q)
-        while state != "Done updating!" and nVisits < maxVisits:
-            state = update_Q(state,Q)
-            print "The state value is", state
-            nVisits += 1
-        print "The number of visits was", nVisits
-        nEpisodes += 1
-main(1)
+# main(1)
 
 
 # If I run main for ~10 loops, nVisits almost never hits 500.
