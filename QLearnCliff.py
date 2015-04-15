@@ -140,18 +140,20 @@ def update_Q(state,Q):
         Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward() + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
     return next_state(state,next_action(state)[1])
 
-start_state = np.random.randint(0,48)
-print "The starting state is", start_state
-nVisit = 0
-following = update_Q(start_state,Q)
-for i in xrange(100):
-    following = update_Q(following,Q)
-    nVisit += 1
-print nVisit
-
 def main():
+    global Q
+    start_state = np.random.randint(0,48)
+    if start_state != terminal:
+        
+    print "The starting state is", start_state
+    nVisit = 0
+    following = update_Q(start_state,Q)
+    for i in xrange(100):
+        following = update_Q(following,Q)
+        nVisit += 1
+    print nVisit
     
-    
+main()
 #==============================================================================
 # Q[22][1] = 5
 # print Q[22][inv_direction['>']]
