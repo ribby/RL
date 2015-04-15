@@ -15,7 +15,7 @@ import numpy as np
 gamma = 1
 epsilon = 100 # Epsilon effectively equals 0.1%,
 maxEpisodes = 100
-alpha = 0.1
+alpha = 0.01
 stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
@@ -38,9 +38,6 @@ for i in grid:
 terminal = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
 direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
 inv_direction = {v: k for k, v in direction.items()}
-
-def reward():
-    return -1
 
 def all_next_states(state):
     '''
@@ -118,6 +115,13 @@ def next_state(state, direction):
             return state
         else:
             return state + len(grid[0])
+            
+def reward(next_state):
+    global terminal
+    if next_state in terminal:
+        return -100
+    else:
+        return -1
 
 def update_Q(state,Q):
     global terminal
@@ -127,7 +131,7 @@ def update_Q(state,Q):
         Q[state][inv_direction[next_action(state)[1]]] = 0
         return "Done updating!"
     else:
-        Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward() + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
+        Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward(next_state(state,next_action(state)[1])) + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
     return next_state(state,next_action(state)[1])
 
 def main(maxEpisodes):
@@ -147,10 +151,14 @@ def main(maxEpisodes):
         nEpisodes += 1
 main(1000)
 
-visual_action = np.zeros(nStates)
+num_action = np.empty(nStates)
+visual_action = np.empty(nStates, np.dtype((str,3)))
 for i in xrange(48):
-    visual_action[i] = np.argmax(Q[i])
-        
+    num_action[i] = np.argmax(Q[i])
+    visual_action[i] = direction[num_action[i]]
+visual_action = visual_action.reshape([HEIGHT,WIDTH])
+print visual_action
+
     
 #==============================================================================
 # Q[22][1] = 5
