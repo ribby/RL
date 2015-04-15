@@ -145,8 +145,13 @@ def main(maxEpisodes):
             nVisits += 1
         print "The number of visits was", nVisits
         nEpisodes += 1
-
 main(1000)
+
+visual_action = np.zeros(nStates)
+for i in xrange(48):
+    visual_action[i] = np.argmax(Q[i])
+        
+    
 #==============================================================================
 # Q[22][1] = 5
 # print Q[22][inv_direction['>']]
