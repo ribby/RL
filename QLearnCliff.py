@@ -63,15 +63,17 @@ def next_states(state):
     
 def next_action(state):
     global Q
-    global epsilon
-    epsilon *= 1000 # Assume epsilon >= 0.001. Using this as a work around for 
-                                 # random number generation domain
+#==============================================================================
+#     global epsilon
+#     epsilon *= 1000 # Assume epsilon >= 0.001. Using this as a work around for 
+#                                  # random number generation domain
+#==============================================================================
     max_action_per_state = []
     next_state = next_states(state)
     for state in next_state:
         max_action_per_state.append(max(Q[state])) # left, right, up, down
     max_action = max(max_action_per_state) 
-    if np.random.randint(0,100000) > epsilon: # greedy action
+    if np.random.randint(0,100000) > 100: # greedy action
         return max_action
     else: # exploration
         max_action_per_state.remove(max_action)
@@ -95,7 +97,7 @@ Q[3][2] = 10
 Q[16][3] = 5
 print Q[14]
 test = []
-for i in xrange(1000):
+for i in xrange(10000):
     test.append(next_action(15))
 
 #==============================================================================
