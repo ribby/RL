@@ -79,22 +79,25 @@ def next_action(state):
     using epsilon greedy methods.
     '''
     global epsilon
+    global Q
     max_action_per_state = []
     possible_states = all_next_states(state)
-    for state in possible_states:
-        max_action_per_state.append(max(Q[state])) # left, right, up, down
-    max_action = max(max_action_per_state) 
-    for_direction = max_action_per_state[:] # to be used in else clause for direction
-    if np.random.randint(0,100000) > epsilon: # greedy action
-        if max_action_per_state.count(max_action) != 1: # Case with multiple maxima
-            indices = [i for i, x in enumerate(max_action_per_state) if x == max_action]        
-            return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums
-        else: # Single maxima
-            return [max_action, direction[max_action_per_state.index(max_action)]]
-    else: # exploration
-        max_action_per_state.remove(max_action)
-        non_optimal_action = max_action_per_state[np.random.randint(0,3)]
-        return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
+#==============================================================================
+#     for state in possible_states:
+#         max_action_per_state.append(max(Q[state])) # left, right, up, down
+#     max_action = max(max_action_per_state) 
+#     for_direction = max_action_per_state[:] # to be used in else clause for direction
+#     if np.random.randint(0,100000) > epsilon: # greedy action
+#         if max_action_per_state.count(max_action) != 1: # Case with multiple maxima
+#             indices = [i for i, x in enumerate(max_action_per_state) if x == max_action]        
+#             return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums
+#         else: # Single maxima
+#             return [max_action, direction[max_action_per_state.index(max_action)]]
+#     else: # exploration
+#         max_action_per_state.remove(max_action)
+#         non_optimal_action = max_action_per_state[np.random.randint(0,3)]
+#         return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
+#==============================================================================
 
 #==============================================================================
 # Q[37] = [-1, -1, -1, -1]
@@ -154,20 +157,21 @@ def reward(state, direction):
 
 def update_Q(state,Q):
     '''
-    Updates one entry in Q
+    Updates one entry in Q, and returns the next state
     '''
     global cliff
     global gamma
     global alpha
     global terminal_state
-    
     [value,direction] = next_action(state)
     if state == terminal_state:
         Q[state][inv_direction[direction]] = 0
         return "Done updating!"
     else:
         Q[state][inv_direction[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][inv_direction[direction]])
+        print "The current state, direction pair is,", state, direction
         print "The next_state is", next_state(state,direction)
+        return next_state(state,direction) # THIS MIGHT BE UNNECESSARY
         
         
 #==============================================================================
@@ -177,24 +181,32 @@ def update_Q(state,Q):
 #==============================================================================
 
 
-def main(maxEpisodes):
-    global Q
-    global start_state
-    nEpisodes = 0
-    maxVisits = 10
-    while nEpisodes < maxEpisodes:
-        nVisits = 0
-        print "The starting state is:", start_state
-        state = update_Q(start_state,Q)
-        while state != "Done updating!" and nVisits < maxVisits:
-            state = next_state(state,direction)
-            update_Q(state,Q)
-            nVisits += 1
-        print "The number of visits was", nVisits
-        nEpisodes += 1
-        
 
-main(1)
+
+#==============================================================================
+# def main(maxEpisodes):
+#     global Q
+#     global start_state
+#     nEpisodes = 0
+#     maxVisits = 10
+#     while nEpisodes < maxEpisodes:
+#         nVisits = 0
+#         print "The starting state is:", start_state
+#         state = update_Q(start_state,Q)
+#         print type(state)
+#         while state != "Done updating!" and nVisits < maxVisits:
+#             state = next_state(state,direction)
+#             update_Q(state,Q)
+#             nVisits += 1
+#         print "The number of visits was", nVisits
+#==============================================================================
+#        nEpisodes += 1
+
+new_state = update_Q(start_state,Q)
+for i in xrange(5):
+    update_Q(new_state,Q)
+
+# main(1)
 
 
 # If I run main for ~10 loops, nVisits almost never hits 500.
