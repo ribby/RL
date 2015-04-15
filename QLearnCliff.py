@@ -6,7 +6,7 @@ Created on Sun Apr 12 10:28:09 2015
 
 KNOWN BUGS:
 * epsilon should be revalued. Currently messy for use in next_action()
-* the way I deal with repeated state-value pairs in next_state() can be improved
+* hardcoded a range in next_state
 * yet to implement first-visit business
 * need to deal with repetition in next_action
 """
@@ -96,43 +96,50 @@ def next_action(state):
         non_optimal_action = max_action_per_state[np.random.randint(0,3)]
         return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
 
-Q[37] = [-1, -1, -1, -1]
-test = []
-print next_action(36)
-for i in xrange(10000):
-    test.append(next_action(36)[1])
-print test.count('>')
-#%%
 #==============================================================================
-# def next_state(state, direction):
-#     '''
-#     Helper function to be used in defining the next state in update_Q.
-#     Returns the number of the next state.
-#     '''
-#     global grid
-#     if state in cliff:
-#         return start_state
-#     if direction == '<':
-#         if state in grid[:,0]:
-#             return state
-#         else:
-#             return state - 1
-#     if direction == '>':
-#         if state in grid[:,-1]:
-#             return state
-#         else:
-#             return state + 1
-#     if direction == '^':
-#         if state in grid[0]:
-#             return state
-#         else:
-#             return state - len(grid[0])
-#     if direction == 'v':
-#         if state in grid[-1]:
-#             return state
-#         else:
-#             return state + len(grid[0])
-#             
+# Q[37] = [-1, -1, -1, -1]
+# test = []
+# print next_action(36)
+# for i in xrange(10000):
+#     test.append(next_action(36)[1])
+# print test.count('>')
+#==============================================================================
+
+def next_state(state, direction):
+    '''
+    Helper function to be used in defining the next state in update_Q.
+    Returns the number of the next state.
+    '''
+    global grid
+    global start_state
+    if state in range(25,35):
+        if direction == 'v':
+            return start_state
+    if state == 36:
+        if direction == '>':
+            return start_state
+    if direction == '<':
+        if state in grid[:,0]:
+            return state
+        else:
+            return state - 1
+    if direction == '>':
+        if state in grid[:,-1]:
+            return state
+        else:
+            return state + 1
+    if direction == '^':
+        if state in grid[0]:
+            return state
+        else:
+            return state - len(grid[0])
+    if direction == 'v':
+        if state in grid[-1]:
+            return state
+        else:
+            return state + len(grid[0])
+            
+#==============================================================================
 # def reward(next_state):
 #     global cliff
 #     if next_state in cliff:
