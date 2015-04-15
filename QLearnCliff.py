@@ -81,25 +81,17 @@ def next_action(state, Q):
     global epsilon
 #    global Q
     max_action = max(Q[state])
+    for_direction = list(Q[state][:]) # To be used in exploration
     if np.random.randint(0,100000) > epsilon: # greedy action
         if list(Q[state]).count(max_action) != 1: # If there is more that one max in Q[state]
             indices = [i for i, x in enumerate(list(Q[state])) if x == max_action]        
             return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums          
         else: # Single maxima
             return [max_action, direction[np.argmax(Q[state])]]
-#    else: # exploration
-#        max_action_per_state.remove(max_action)
-#        non_optimal_action = max_action_per_state[np.random.randint(0,3)]
-#       return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
-
-
-    
-#==============================================================================
-# test = np.array([0,0,0,0])
-# test_list = list(test)
-# print test_list.count(max(test))
-#==============================================================================
-
+    else: # exploration
+        for_direction.remove(max_action)
+        non_optimal_action = for_direction[np.random.randint(0,3)]
+        return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
 
 #%%
 
