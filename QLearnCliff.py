@@ -130,30 +130,23 @@ def update_Q(state,Q):
         Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward() + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
     return next_state(state,next_action(state)[1])
 
-def update_Q(state,Q):
-    global terminal
-    global gamma
-    global alpha
-    if state in terminal:
-        Q[state][inv_direction[next_action(state)[1]]] = 0
-    else:
-        Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward() + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
-    return next_state(state,next_action(state)[1])
+def main(maxEpisodes):
+    nEpisodes = 0
+    maxVisits = 500
+    while nEpisodes < maxEpisodes:
+        nVisits = 0
+        start_state = np.random.randint(0,48)
+        print "The starting state is:", start_state
+        flag = update_Q(start_state,Q)
+        if flag == "Done updating!":
+            print "!!!!!!!!!!!!!!!!!"
+        while flag != "Done updating!" and nVisits < maxVisits:
+            flag = update_Q(flag,Q)
+            nVisits += 1
+        print "The number of visits was", nVisits
+        nEpisodes += 1
 
-def main():
-    global Q
-    start_state = np.random.randint(0,48)
-    if start_state != terminal:
-        
-    print "The starting state is", start_state
-    nVisit = 0
-    following = update_Q(start_state,Q)
-    for i in xrange(100):
-        following = update_Q(following,Q)
-        nVisit += 1
-    print nVisit
-    
-main()
+main(1000)
 #==============================================================================
 # Q[22][1] = 5
 # print Q[22][inv_direction['>']]
