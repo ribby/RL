@@ -139,28 +139,39 @@ def next_state(state, direction):
         else:
             return state + len(grid[0])
             
-#==============================================================================
-# def reward(next_state):
-#     global cliff
-#     if next_state in cliff:
-#         return -100
-#     else:
-#         return -1
-# 
-# def update_Q(state,Q):
-#     global cliff
-#     global gamma
-#     global alpha
-#     global terminal_state
-#     new_state = next_state(state,next_action(state)[1])
-#     new_action = inv_direction[next_action(state)[1]]
-#     if state == terminal_state:
-#         Q[state][inv_direction[next_action(state)[1]]] = 0
-#         return "Done updating!"
-#     else:
-#         Q[state][new_action] += alpha*(reward(new_state) + gamma*next_action(state)[0] - Q[state][new_action])
-#==============================================================================
+def reward(state, direction):
+    global cliff
+    if state == 36:
+        if direction == '>':
+            return -100
+        else:
+            return -1
+    elif state in range(25,35):
+        if direction == 'v':
+            return -100
+    else:
+        return -1
 
+def update_Q(state,Q):
+    '''
+    Updates one entry in Q
+    '''
+    global cliff
+    global gamma
+    global alpha
+    global terminal_state
+    
+    [value,direction] = next_action(state)
+    if state == terminal_state:
+        Q[state][inv_direction[direction]] = 0
+        return "Done updating!"
+    else:
+        Q[state][inv_direction[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][inv_direction[direction]])
+        print "The next_state is", next_state(state,direction)
+
+update_Q(36,Q)
+print Q[36]
+print reward(36, 'v')
 #==============================================================================
 # def main(maxEpisodes):
 #     global Q
