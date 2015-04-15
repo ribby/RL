@@ -87,8 +87,29 @@ def next_action(state):
         non_optimal_action = max_action_per_state[np.random.randint(0,3)]
         return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
         
+def next_state(state, direction):
+    global grid
+    if direction == '<':
+        if state in grid[:,0]:
+            return state
+        else:
+            return state - 1
+    if direction == '>':
+        if state in grid[:,-1]:
+            return state
+        else:
+            return state + 1
+    if direction == '^':
+        if state in grid[0]:
+            return state
+        else:
+            return state - len(grid[0])
+    if direction == 'v':
+        if state in grid[-1]:
+            return state
+        else:
+            return state + len(grid[0])
 
-        
 def update_Q(state,Q):
     global terminal
     global gamma
@@ -97,9 +118,12 @@ def update_Q(state,Q):
         Q[state][inv_direction[next_action(state)[1]]] = 0
     else:
         Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward() + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
-        print 
+    return next_state(state,next_action(state)[1])
 
-print update_Q(15,Q)
+following = update_Q(start_state,Q)
+for i in xrange(10):
+    following = update_Q(following,Q)
+        
 
 #==============================================================================
 # Q[22][1] = 5
