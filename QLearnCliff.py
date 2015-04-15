@@ -3,13 +3,17 @@
 Created on Sun Apr 12 10:28:09 2015
 
 @author: oromi_000
+
+KNOWN BUGS:
+* In next_action(), epsilon is hardcoded as 100 into the code. This problem 
+probably comes from the global nature of epsilon.
 """
 
 import numpy as np
 
 # Define Q-learning specific constants
 gamma = 1
-epsilon = 0.1
+epsilon = 100
 maxEpisodes = 100
 alpha = 0.1
 
@@ -63,17 +67,13 @@ def next_states(state):
     
 def next_action(state):
     global Q
-#==============================================================================
-#     global epsilon
-#     epsilon *= 1000 # Assume epsilon >= 0.001. Using this as a work around for 
-#                                  # random number generation domain
-#==============================================================================
+    global epsilon
     max_action_per_state = []
     next_state = next_states(state)
     for state in next_state:
         max_action_per_state.append(max(Q[state])) # left, right, up, down
     max_action = max(max_action_per_state) 
-    if np.random.randint(0,100000) > 100: # greedy action
+    if np.random.randint(0,100000) > epsilon: # greedy action
         return max_action
     else: # exploration
         max_action_per_state.remove(max_action)
