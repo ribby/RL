@@ -5,7 +5,8 @@ Created on Sun Apr 12 10:28:09 2015
 @author: oromi_000
 
 KNOWN BUGS:
-* epsilon should be revalued
+* epsilon should be revalued. Currently messy for use in next_action()
+* the way I deal with repeated state-value pairs in next_state() can be improved
 """
 
 import numpy as np
@@ -15,13 +16,11 @@ gamma = 1
 epsilon = 100 # Epsilon effectively equals 0.1%,
 maxEpisodes = 100
 alpha = 0.1
-start_state = np.random.randint(0,48)
-
+stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
 nActions = 4
 action = np.zeros(nActions,)
-
     
 # Define grid size
 HEIGHT = 4
@@ -29,13 +28,13 @@ WIDTH = 12
 nStates = HEIGHT * WIDTH
 
 # Initializing the action-value function
-grid = np.arange(nStates).reshape([HEIGHT,WIDTH])        # Assigns a number to each state
+grid = np.arange(nStates).reshape([HEIGHT,WIDTH]) # Assigns a number to each state
 Q = {}
 for i in grid:
     for j in i:
         Q[j] = action.copy()
         
-# Define terminal states
+# Define terminal states and directions (to be used when changing states)
 terminal = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
 direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
 inv_direction = {v: k for k, v in direction.items()}
@@ -71,14 +70,20 @@ def all_next_states(state):
         all_next_states.append(state+len(grid[0]))
     return all_next_states
 
-    
 def next_action(state):
+    '''
+    Determines the [value_of_the_next_action, and direction_of_next_action] 
+    using epsilon greedy methods. The way I deal with state-value repetition
+    still needs to be improved.
+    '''
     global epsilon
     max_action_per_state = []
     next_state = all_next_states(state)
     for state in next_state:
         max_action_per_state.append(max(Q[state])) # left, right, up, down
     max_action = max(max_action_per_state) 
+    if max_action_per_state.count(max_action) != 1: # If any sort of repetition in state-value pair
+        return [max_action, direction[np.random.randint(0,4)]] # pick a completely random direction (super grungy)
     for_direction = max_action_per_state[:] # to be used in else clause for direction
     if np.random.randint(0,100000) > epsilon: # greedy action
         return [max_action, direction[max_action_per_state.index(max_action)]]
@@ -88,6 +93,10 @@ def next_action(state):
         return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
         
 def next_state(state, direction):
+    '''
+    Helper function to be used in defining the next state in update_Q.
+    Returns the number of the next state.
+    '''
     global grid
     if direction == '<':
         if state in grid[:,0]:
@@ -116,15 +125,26 @@ def update_Q(state,Q):
     global alpha
     if state in terminal:
         Q[state][inv_direction[next_action(state)[1]]] = 0
+        return "Done updating!"
     else:
         Q[state][inv_direction[next_action(state)[1]]] += alpha*(reward() + gamma*next_action(state)[0] - Q[state][inv_direction[next_action(state)[1]]])
     return next_state(state,next_action(state)[1])
 
-following = update_Q(start_state,Q)
-for i in xrange(10):
-    following = update_Q(following,Q)
-        
+def main(maxEpisodes):
+    nEpisodes = 0
+    nVisits = 0
+    maxVisits = 500
+    while nEpisodes < maxEpisodes:
+        start_state = np.random.randint(0,48)
+        print "The starting state is:", start_state
+        flag = update_Q(start_state,Q)
+        while flag != "Done updating!" and nVisits < maxVisits:
+            flag = update_Q(flag,Q)
+            nVisits += 1
+        print "The number of visits was", nVisits
+        nEpisodes += 1
 
+main(1000)
 #==============================================================================
 # Q[22][1] = 5
 # print Q[22][inv_direction['>']]
