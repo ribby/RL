@@ -157,34 +157,33 @@ def update_Q(state,Q):
     global gamma
     global alpha
     global terminal_state
-    print "The state in update_Q is", state
     [value,direction] = next_action(state)
     if state == terminal_state:
         Q[state][inv_direction[direction]] = 0
-        return "Done updating!"
+        return terminal_state
     else:
         Q[state][inv_direction[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][inv_direction[direction]])
-        print "The current state, direction pair is,", state, direction
-        print "The next state is", next_state(state,direction)
+#        print "The current state, direction pair is,", state, direction
+#        print "The next state is", next_state(state,direction)
         return next_state(state,direction) # THIS MIGHT BE UNNECESSARY
+start_state = 35
 
 def main(maxEpisodes):
     global Q
     global start_state
+    global terminal_state
     nEpisodes = 0
-    maxVisits = 10
+    maxVisits = 1000
     while nEpisodes < maxEpisodes:
         nVisits = 0
 #        print "The starting state is:", start_state
         state = update_Q(start_state,Q)
         direction = next_action(state)[1]
-        print "The state in main is", state
-        while state != "Done updating!" and nVisits < maxVisits:
+        while state != terminal_state and nVisits < maxVisits:
             state = next_state(state,direction)
-            print "The state in main inner loop is", state            
             update_Q(state,Q)
             nVisits += 1
-#        print "The number of visits was", nVisits
+        print "The number of visits was", nVisits
         nEpisodes += 1
 
 main(1)
