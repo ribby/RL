@@ -138,7 +138,7 @@ def main(maxEpisodes):
     global Q
     nEpisodes = 0
     maxVisits = 500
-    while nEpisodes:
+    while nEpisodes < maxEpisodes:
         nVisits = 0
         start_state = np.random.randint(0,48)
         print "The starting state is:", start_state
