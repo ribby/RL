@@ -175,16 +175,18 @@ def main(maxEpisodes):
     global terminal_state
     nEpisodes = 0
     maxVisits = 1000
+    temp = Q.copy()
     while nEpisodes < maxEpisodes:
         nVisits = 0
         next_state = update_Q(start_state)
         while next_state != terminal_state and nVisits < maxVisits:
             next_state = update_Q(next_state)
             nVisits += 1
-        print "The number of visits was", nVisits
+        print "The value of the start state is", Q[start_state][2]
         nEpisodes += 1
-        
-main(1)
+
+            
+main(3500)
 
 #==============================================================================
 # def main(maxEpisodes):
