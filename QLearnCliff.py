@@ -41,8 +41,8 @@ for i in grid:
 start_state = 36
 terminal_state = 47
 cliff = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
-direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
-inv_direction = {v: k for k, v in direction.items()} # {'<':0, '>':1 ...}
+number_to_direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
+direction_to_number = {v: k for k, v in number_to_direction.items()} # {'<':0, '>':1 ...}
 
 
 def next_action(state):
@@ -56,11 +56,11 @@ def next_action(state):
     if np.random.random() > epsilon: # greedy action
         if list(Q[state]).count(max_action) != 1: # If there is more that one max in Q[state]
             indices = [i for i, x in enumerate(list(Q[state])) if x == max_action]        
-            return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums          
+            return [max_action, number_to_direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums          
         else: # Single maxima
-            return [max_action, direction[np.argmax(Q[state])]]
+            return [max_action, number_to_direction[np.argmax(Q[state])]]
     else: # simplified exploration, will sometimes cause exploration to move in direction of maximum
-        return [max_action, direction[np.random.randint(0,4)]]
+        return [max_action, number_to_direction[np.random.randint(0,4)]]
 
 #==============================================================================
 # Q[25] = np.array([-2, -1, -4, -3])
@@ -140,10 +140,10 @@ def update_Q(state,Q):
     global terminal_state
     [value,direction] = next_action(state)
     if state == terminal_state:
-        Q[state][inv_direction[direction]] = 0
+        Q[state][direction_to_number[direction]] = 0
         return terminal_state
     else:
-        Q[state][inv_direction[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][inv_direction[direction]])
+        Q[state][direction_to_number[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][direction_to_number[direction]])
 #        print "The current state, direction pair is,", state, direction
 #        print "The next state is", next_state(state,direction)
         return next_state(state,direction) # THIS MIGHT BE UNNECESSARY
@@ -197,7 +197,7 @@ main(1)
 
 #==============================================================================
 # Q[22][1] = 5
-# print Q[22][inv_direction['>']]
+# print Q[22][direction_to_number['>']]
 #==============================================================================
         
         
