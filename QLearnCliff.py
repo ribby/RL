@@ -174,7 +174,7 @@ def main(maxEpisodes):
     global start_state
     global terminal_state
     nEpisodes = 0
-    maxVisits = 100
+    maxVisits = 1000
     while nEpisodes < maxEpisodes:
         nVisits = 0
         next_state = update_Q(start_state)
@@ -182,6 +182,7 @@ def main(maxEpisodes):
             next_state = update_Q(next_state)
             nVisits += 1
         print "The number of visits was", nVisits
+        nEpisodes += 1
         
 main(1)
 
