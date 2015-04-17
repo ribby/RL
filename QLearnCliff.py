@@ -154,11 +154,37 @@ def update_Q(state):
 
 # Every time I run updateQ, Q is updated AND a direction is returned
 
-z = 47
-print "The next state is:", update_Q(z)
-print "\n"
-print Q[z]
-#%%
+#==============================================================================
+# z = 47
+# print "The next state is:", update_Q(z)
+# print "\n"
+# print Q[z]
+#==============================================================================
+
+#==============================================================================
+# print Q
+# for i in xrange(5):
+#     q = update_Q(5) # Just assigning the variable will update q
+# print "\n"
+# print Q
+#==============================================================================
+
+def main(maxEpisodes):
+    global Q
+    global start_state
+    global terminal_state
+    nEpisodes = 0
+    maxVisits = 100
+    while nEpisodes < maxEpisodes:
+        nVisits = 0
+        next_state = update_Q(start_state)
+        while next_state != terminal_state and nVisits < maxVisits:
+            next_state = update_Q(next_state)
+            nVisits += 1
+        print "The number of visits was", nVisits
+        
+main(1)
+
 #==============================================================================
 # def main(maxEpisodes):
 #     global Q
