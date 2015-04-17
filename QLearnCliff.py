@@ -9,13 +9,14 @@ KNOWN BUGS:
 * hardcoded a range in next_state
 * yet to implement first-visit business
 * need to deal with repetition in next_action
+* in next_action, I only remove one optimal action. Instead I should be removing all optimal actions
 """
 
 import numpy as np
 
 # Define Q-learning specific constants
 gamma = 1
-epsilon = 100 # Epsilon effectively equals 0.1%,
+epsilon = 0.001 # Epsilon effectively equals 0.1%,
 maxEpisodes = 100
 alpha = 0.5
 stopping = 1e-3
@@ -44,35 +45,6 @@ direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
 inv_direction = {v: k for k, v in direction.items()} # {'<':0, '>':1 ...}
 
 
-
-def all_next_states(state):
-    '''
-    Returns all possible next states in the form [left,right,up,down]
-    '''
-    global grid
-    all_next_states = []
-    # Left
-    if state in grid[:,0]:
-        all_next_states.append(state)
-    else:
-        all_next_states.append(state-1)
-    # Right
-    if state in grid[:,-1]:
-        all_next_states.append(state)
-    else:
-        all_next_states.append(state+1)
-    # Up
-    if state in grid[0]:
-        all_next_states.append(state)
-    else:
-        all_next_states.append(state-len(grid[0]))
-    # Down
-    if state in grid[-1]:
-        all_next_states.append(state)
-    else:
-        all_next_states.append(state+len(grid[0]))
-    return all_next_states
-
 def next_action(state):
     '''
     Determines the [value_of_the_next_action, and direction_of_next_action] 
@@ -81,27 +53,28 @@ def next_action(state):
     global epsilon
     global Q
     max_action = max(Q[state])
-    for_direction = list(Q[state][:]) # To be used in exploration
-    if np.random.randint(0,100000) > epsilon: # greedy action
+    if np.random.random() > epsilon: # greedy action
         if list(Q[state]).count(max_action) != 1: # If there is more that one max in Q[state]
             indices = [i for i, x in enumerate(list(Q[state])) if x == max_action]        
             return [max_action, direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums          
         else: # Single maxima
             return [max_action, direction[np.argmax(Q[state])]]
-    else: # exploration
-        for_direction.remove(max_action)
-        non_optimal_action = for_direction[np.random.randint(0,3)]
-        return [non_optimal_action, direction[for_direction.index(non_optimal_action)]]
+    else: # simplified exploration, will sometimes cause exploration to move in direction of maximum
+        return [max_action, direction[np.random.randint(0,4)]]
 
-#==============================================================================
-# Q[37] = [-1, -1, -1, -1]
-# test = []
-# print next_action(36)
-# for i in xrange(10000):
-#     test.append(next_action(36)[1])
-# print test.count('>')
-#==============================================================================
+Q[25] = np.array([-2, -1, -4, -3])
+test = []
+print next_action(25)
+for i in xrange(10000):
+    test.append(next_action(25)[1])
+    
+print "The amount of left is", test.count('<')
+print "The amount of right is", test.count('>')
+print "The amount of up is", test.count('^')
+print "The amount of down is", test.count('v')
 
+
+#%%
 def next_state(state, direction):
     '''
     Helper function to be used in defining the next state in update_Q.
