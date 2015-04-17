@@ -41,7 +41,7 @@ start_state = 36
 terminal_state = 47
 cliff = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
 direction = {0: '<', 1: '>', 2: '^', 3: 'v'}
-inv_direction = {v: k for k, v in direction.items()}
+inv_direction = {v: k for k, v in direction.items()} # {'<':0, '>':1 ...}
 
 
 
@@ -166,7 +166,6 @@ def update_Q(state,Q):
 #        print "The current state, direction pair is,", state, direction
 #        print "The next state is", next_state(state,direction)
         return next_state(state,direction) # THIS MIGHT BE UNNECESSARY
-start_state = 35
 
 def main(maxEpisodes):
     global Q
