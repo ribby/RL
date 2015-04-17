@@ -62,19 +62,19 @@ def next_action(state):
     else: # simplified exploration, will sometimes cause exploration to move in direction of maximum
         return [max_action, direction[np.random.randint(0,4)]]
 
-Q[25] = np.array([-2, -1, -4, -3])
-test = []
-print next_action(25)
-for i in xrange(10000):
-    test.append(next_action(25)[1])
-    
-print "The amount of left is", test.count('<')
-print "The amount of right is", test.count('>')
-print "The amount of up is", test.count('^')
-print "The amount of down is", test.count('v')
+#==============================================================================
+# Q[25] = np.array([-2, -1, -4, -3])
+# test = []
+# print next_action(25)
+# for i in xrange(10000):
+#     test.append(next_action(25)[1])
+# print "The amount of left is", test.count('<')
+# print "The amount of right is", test.count('>')
+# print "The amount of up is", test.count('^')
+# print "The amount of down is", test.count('v')
+#==============================================================================
 
 
-#%%
 def next_state(state, direction):
     '''
     Helper function to be used in defining the next state in update_Q.
@@ -84,7 +84,7 @@ def next_state(state, direction):
     global start_state
     if state in range(25,35):
         if direction == 'v':
-            return start_state
+            return start_state # Also return reward -100
     if state == 36:
         if direction == '>':
             return start_state
@@ -119,9 +119,16 @@ def reward(state, direction):
     elif state in range(25,35):
         if direction == 'v':
             return -100
+        else:
+            return -100
     else:
         return -1
 
+for i in xrange(0,47):
+    for j in Q[i]:
+        print "State:", i, "Direction:", next_state(Q[i], direction[j])
+
+#%%
 def update_Q(state,Q):
     '''
     Updates one entry in Q, and returns the next state
