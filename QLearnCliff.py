@@ -84,7 +84,7 @@ def next_state(state, direction):
     global start_state
     if state in range(25,35):
         if direction == 'v':
-            return start_state # Also return reward -100
+            return start_state
     if state == 36:
         if direction == '>':
             return start_state
@@ -111,6 +111,9 @@ def next_state(state, direction):
             
 def reward(state, direction):
     global cliff
+    global terminal_state
+    if state == terminal_state:
+        return 0
     if state == 36:
         if direction == '>':
             return -100
@@ -129,11 +132,12 @@ def reward(state, direction):
 #     print "State:", i, "Direction: down Reward:", reward(i, 'v')
 #==============================================================================
 
-#%%
-def update_Q(state,Q):
+
+def update_Q(state):
     '''
     Updates one entry in Q, and returns the next state
     '''
+    global Q
     global cliff
     global gamma
     global alpha
@@ -148,25 +152,34 @@ def update_Q(state,Q):
 #        print "The next state is", next_state(state,direction)
         return next_state(state,direction) # THIS MIGHT BE UNNECESSARY
 
-def main(maxEpisodes):
-    global Q
-    global start_state
-    global terminal_state
-    nEpisodes = 0
-    maxVisits = 1000
-    while nEpisodes < maxEpisodes:
-        nVisits = 0
-#        print "The starting state is:", start_state
-        state = update_Q(start_state,Q)
-        direction = next_action(state)[1]
-        while state != terminal_state and nVisits < maxVisits:
-            state = next_state(state,direction)
-            update_Q(state,Q)
-            nVisits += 1
-        print "The number of visits was", nVisits
-        nEpisodes += 1
+# Every time I run updateQ, Q is updated AND a direction is returned
 
-main(1)
+z = 47
+print "The next state is:", update_Q(z)
+print "\n"
+print Q[z]
+#%%
+#==============================================================================
+# def main(maxEpisodes):
+#     global Q
+#     global start_state
+#     global terminal_state
+#     nEpisodes = 0
+#     maxVisits = 100
+#     while nEpisodes < maxEpisodes:
+#         nVisits = 0
+# #        print "The starting state is:", start_state
+#         state = update_Q(start_state)
+#         direction = next_action(state)[1]
+#         while state != terminal_state and nVisits < maxVisits:
+#             state = next_state(state,direction)
+#             update_Q(state)
+#             nVisits += 1
+#         print "The number of visits was", nVisits
+#==============================================================================
+#        nEpisodes += 1
+
+#main(1)
 
 #==============================================================================
 # new_state = update_Q(start_state,Q)
