@@ -120,13 +120,14 @@ def reward(state, direction):
         if direction == 'v':
             return -100
         else:
-            return -100
+            return -1
     else:
         return -1
 
-for i in xrange(0,47):
-    for j in Q[i]:
-        print "State:", i, "Direction:", next_state(Q[i], direction[j])
+#==============================================================================
+# for i in xrange(0,47):
+#     print "State:", i, "Direction: down Reward:", reward(i, 'v')
+#==============================================================================
 
 #%%
 def update_Q(state,Q):
