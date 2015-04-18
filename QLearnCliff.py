@@ -150,7 +150,7 @@ def update_Q(state):
         Q[state][direction_to_number[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][direction_to_number[direction]])
 #        print "The current state, direction pair is,", state, direction
 #        print "The next state is", next_state(state,direction)
-        return next_state(state,direction) # THIS MIGHT BE UNNECESSARY
+        return next_state(state,direction) 
 
 # Every time I run updateQ, Q is updated AND a direction is returned
 
@@ -178,15 +178,23 @@ def main(maxEpisodes):
     temp = Q.copy()
     while nEpisodes < maxEpisodes:
         nVisits = 0
+        episode_reward = 0
         next_state = update_Q(start_state)
         while next_state != terminal_state and nVisits < maxVisits:
             next_state = update_Q(next_state)
             nVisits += 1
-        print "The value of the start state is", Q[start_state][2]
+        # Subtract all values of Q
+        for i in xrange(nStates-1):
+            for j in xrange(nActions):
+                
+                episode_reward += Q[i][j] - temp[i][j]
+#                print temp[i][j]
+        temp = Q.copy()
         nEpisodes += 1
+        print episode_reward
 
             
-main(3500)
+main(1)
 
 #==============================================================================
 # def main(maxEpisodes):
