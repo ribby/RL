@@ -13,6 +13,7 @@ KNOWN BUGS:
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Define Q-learning specific constants
 gamma = 1
@@ -169,13 +170,16 @@ def update_Q(state):
 # print Q
 #==============================================================================
 
+
 def main(maxEpisodes):
     global Q
     global start_state
     global terminal_state
+    global temp
     nEpisodes = 0
     maxVisits = 1000
-    temp = Q.copy()
+    reward_list = []
+    diff_list = [] 
     while nEpisodes < maxEpisodes:
         nVisits = 0
         episode_reward = 0
@@ -186,16 +190,15 @@ def main(maxEpisodes):
         # Subtract all values of Q
         for i in xrange(nStates-1):
             for j in xrange(nActions):
-                
-                episode_reward += Q[i][j] - temp[i][j]
-#                print temp[i][j]
-        temp = Q.copy()
+                episode_reward += Q[i][j]
         nEpisodes += 1
-        print episode_reward
-
-            
-main(1)
-
+        reward_list.append(episode_reward)
+    diff_list.append(reward_list[0])  # Arbitrary first value
+    for i in xrange(len(reward_list)-1):
+        diff_list.append(reward_list[i+1] - reward_list[i])
+    plt.plot(range(0, maxEpisodes), diff_list, 'ro')
+    plt.show()
+main(50)
 #==============================================================================
 # def main(maxEpisodes):
 #     global Q
