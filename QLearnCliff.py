@@ -5,7 +5,7 @@ Created on Sun Apr 12 10:28:09 2015
 @author: oromi_000
 
 KNOWN BUGS:
-* epsilon should be revalued. Currently messy for use in next_action()
+* first value in graph is arbitrary
 * hardcoded a range in next_state
 * yet to implement first-visit business
 * need to deal with repetition in next_action
@@ -53,27 +53,15 @@ def next_action(state):
     '''
     global epsilon
     global Q
-    max_action = max(Q[state])
+    max_action_value = max(Q[state])
     if np.random.random() > epsilon: # greedy action
-        if list(Q[state]).count(max_action) != 1: # If there is more that one max in Q[state]
-            indices = [i for i, x in enumerate(list(Q[state])) if x == max_action]        
-            return [max_action, number_to_direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums          
+        if list(Q[state]).count(max_action_value) != 1: # If there is more that one max in Q[state]
+            indices = [i for i, x in enumerate(list(Q[state])) if x == max_action_value]        
+            return [max_action_value, number_to_direction[indices[np.random.randint(0,len(indices))]]] # randomly pick one of those maximums          
         else: # Single maxima
-            return [max_action, number_to_direction[np.argmax(Q[state])]]
+            return [max_action_value, number_to_direction[np.argmax(Q[state])]]
     else: # simplified exploration, will sometimes cause exploration to move in direction of maximum
-        return [max_action, number_to_direction[np.random.randint(0,4)]]
-
-#==============================================================================
-# Q[25] = np.array([-2, -1, -4, -3])
-# test = []
-# print next_action(25)
-# for i in xrange(10000):
-#     test.append(next_action(25)[1])
-# print "The amount of left is", test.count('<')
-# print "The amount of right is", test.count('>')
-# print "The amount of up is", test.count('^')
-# print "The amount of down is", test.count('v')
-#==============================================================================
+        return [max_action_value, number_to_direction[np.random.randint(0,4)]]
 
 
 def next_state(state, direction):
@@ -128,11 +116,6 @@ def reward(state, direction):
     else:
         return -1
 
-#==============================================================================
-# for i in xrange(0,47):
-#     print "State:", i, "Direction: down Reward:", reward(i, 'v')
-#==============================================================================
-
 
 def update_Q(state):
     '''
@@ -148,27 +131,10 @@ def update_Q(state):
         Q[state][direction_to_number[direction]] = 0
         return terminal_state
     else:
-        Q[state][direction_to_number[direction]] += alpha*(reward(state, direction) + gamma*next_action(state)[0] - Q[state][direction_to_number[direction]])
-#        print "The current state, direction pair is,", state, direction
-#        print "The next state is", next_state(state,direction)
+        Q[state][direction_to_number[direction]] += \
+            alpha*(reward(state, direction) + gamma*next_action(state)[0] + \
+            - Q[state][direction_to_number[direction]])
         return next_state(state,direction) 
-
-# Every time I run updateQ, Q is updated AND a direction is returned
-
-#==============================================================================
-# z = 47
-# print "The next state is:", update_Q(z)
-# print "\n"
-# print Q[z]
-#==============================================================================
-
-#==============================================================================
-# print Q
-# for i in xrange(5):
-#     q = update_Q(5) # Just assigning the variable will update q
-# print "\n"
-# print Q
-#==============================================================================
 
 
 def main(maxEpisodes):
@@ -196,71 +162,14 @@ def main(maxEpisodes):
     diff_list.append(reward_list[0])  # Arbitrary first value
     for i in xrange(len(reward_list)-1):
         diff_list.append(reward_list[i+1] - reward_list[i])
-    plt.plot(range(0, maxEpisodes), diff_list, 'ro')
+    plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
 main(50)
-#==============================================================================
-# def main(maxEpisodes):
-#     global Q
-#     global start_state
-#     global terminal_state
-#     nEpisodes = 0
-#     maxVisits = 100
-#     while nEpisodes < maxEpisodes:
-#         nVisits = 0
-# #        print "The starting state is:", start_state
-#         state = update_Q(start_state)
-#         direction = next_action(state)[1]
-#         while state != terminal_state and nVisits < maxVisits:
-#             state = next_state(state,direction)
-#             update_Q(state)
-#             nVisits += 1
-#         print "The number of visits was", nVisits
-#==============================================================================
-#        nEpisodes += 1
 
-#main(1)
-
-#==============================================================================
-# new_state = update_Q(start_state,Q)
-# for i in xrange(5):
-#     update_Q(new_state,Q)
-#==============================================================================
-
-
-
-# If I run main for ~10 loops, nVisits almost never hits 500.
-# As I go to ~100 loops, it shows up extremely often
-
-#==============================================================================
-# num_action = np.empty(nStates)
-# visual_action = np.empty(nStates, np.dtype((str,3)))
-# for i in xrange(48):
-#     num_action[i] = np.argmax(Q[i])
-#     visual_action[i] = direction[num_action[i]]
-# visual_action = visual_action.reshape([HEIGHT,WIDTH])
-# 
-# QMax = np.empty(nStates)
-# for i in xrange(48):
-#     QMax[i] = max(Q[i])
-#==============================================================================
-#print QMax
-
-
-
-#==============================================================================
-# Q[22][1] = 5
-# print Q[22][direction_to_number['>']]
-#==============================================================================
-        
-        
-#==============================================================================
-# print Q[14]
-# Q[14][0] = 7
-# Q[3][2] = 10
-# Q[16][3] = 5
-# print Q[14]
-# test = []
-# for i in xrange(10000):
-#     test.append(next_action(15))
-#==============================================================================
+# Prints out optimal direction of travel
+direction_matrix = np.empty(nStates,str)
+for i in xrange(nStates):
+    direction_matrix[i] = number_to_direction[np.argmax(Q[i])]
+direction_matrix = direction_matrix.reshape(HEIGHT, WIDTH)
+print direction_matrix
+    
