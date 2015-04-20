@@ -67,7 +67,7 @@ def next_action(state):
 def next_state(state, direction):
     '''
     Helper function to be used in defining the next state in update_Q.
-    Returns the number of the next state.
+    Returns the number of the next state. Direction is an arrow.
     '''
     global grid
     global start_state
@@ -117,16 +117,15 @@ def reward(state, direction):
         return -1
 
 
-def update_Q(state):
+def update_Q(state, direction):
     '''
-    Updates one entry in Q, and returns the next state
+    Updates one entry in Q, and returns the next state. Direction is an arrow.
     '''
     global Q
     global cliff
     global gamma
     global alpha
     global terminal_state
-    [value,direction] = next_action(state)
     if state == terminal_state:
         Q[state][direction_to_number[direction]] = 0
         return terminal_state
@@ -134,8 +133,25 @@ def update_Q(state):
         Q[state][direction_to_number[direction]] += \
             alpha*(reward(state, direction) + gamma*next_action(state)[0] + \
             - Q[state][direction_to_number[direction]])
-        return next_state(state,direction) 
+        return
 
+#==============================================================================
+# print Q
+# update_Q(36, '^')
+# print "\n"
+# print Q
+#==============================================================================
+
+action = next_action(start_state)[1]
+state = next_state(start_state, action)
+update_Q(start_state,action)
+print "Update 1", Q[36], action, start_state
+
+action = next_action(state)[1]
+state = next_state(state, action)
+update_Q(state,action)
+print "Update 2", Q, action, state
+#%%
 
 def main(maxEpisodes):
     global Q
@@ -150,10 +166,14 @@ def main(maxEpisodes):
     while nEpisodes < maxEpisodes:
         nVisits = 0
         episode_reward = 0
-        next_state = update_Q(start_state)
-        while next_state != terminal_state and nVisits < maxVisits:
-            next_state = update_Q(next_state)
-            nVisits += 1
+        action = next_action(start_state)[1]
+        state = next_state(start_state, action)
+        update_Q(start_state,action)
+        while state != terminal_state and nVisits < maxVisits:
+            action = next_action(state)[1]
+            state = next_state(state, action)
+            update_Q(state,action)
+            nVisits += 1            
         # Subtract all values of Q
         for i in xrange(nStates-1):
             for j in xrange(nActions):
@@ -166,12 +186,14 @@ def main(maxEpisodes):
     plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
     
-main(1)
+main(50)
 
-# Prints out optimal direction of travel
-direction_matrix = np.empty(nStates,str)
-for i in xrange(nStates):
-    direction_matrix[i] = number_to_direction[np.argmax(Q[i])]
-direction_matrix = direction_matrix.reshape(HEIGHT, WIDTH)
-print direction_matrix
+#==============================================================================
+# # Prints out optimal direction of travel
+# direction_matrix = np.empty(nStates,str)
+# for i in xrange(nStates):
+#     direction_matrix[i] = number_to_direction[np.argmax(Q[i])]
+# direction_matrix = direction_matrix.reshape(HEIGHT, WIDTH)
+# print direction_matrix
+#==============================================================================
     
