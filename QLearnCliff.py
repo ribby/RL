@@ -162,18 +162,25 @@ def main(maxEpisodes):
     maxVisits = 1000
     reward_list = []
     diff_list = []
-    first_visit_flag = np.zeros([nStates,])     # Set flag[state] = 1 when visited
     while nEpisodes < maxEpisodes:
         nVisits = 0
         episode_reward = 0
+        first_visit_flag = np.zeros([nStates,])     # Set flag[state] = 1 when visited
         action = next_action(start_state)[1]
         state = next_state(start_state, action)
         update_Q(start_state,action)
+        first_visit_flag[start_state] = 1
         while state != terminal_state and nVisits < maxVisits:
-            action = next_action(state)[1]
-            state = next_state(state, action)
-            update_Q(state,action)
-            nVisits += 1            
+            if first_visit_flag[state] == 0:
+                first_visit_flag[state] = 1
+                action = next_action(state)[1]
+                state = next_state(state, action)
+                update_Q(state,action)
+                nVisits += 1
+            else:
+                action = next_action(state)[1]
+                state = next_state(state, action)
+                nVisits += 1                
         # Subtract all values of Q
         for i in xrange(nStates-1):
             for j in xrange(nActions):
@@ -186,14 +193,12 @@ def main(maxEpisodes):
     plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
     
-main(50)
+main(5000)
 
-#==============================================================================
-# # Prints out optimal direction of travel
-# direction_matrix = np.empty(nStates,str)
-# for i in xrange(nStates):
-#     direction_matrix[i] = number_to_direction[np.argmax(Q[i])]
-# direction_matrix = direction_matrix.reshape(HEIGHT, WIDTH)
-# print direction_matrix
-#==============================================================================
+# Prints out optimal direction of travel
+direction_matrix = np.empty(nStates,str)
+for i in xrange(nStates):
+    direction_matrix[i] = number_to_direction[np.argmax(Q[i])]
+direction_matrix = direction_matrix.reshape(HEIGHT, WIDTH)
+print direction_matrix
     
