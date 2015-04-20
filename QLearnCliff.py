@@ -145,7 +145,8 @@ def main(maxEpisodes):
     nEpisodes = 0
     maxVisits = 1000
     reward_list = []
-    diff_list = [] 
+    diff_list = []
+    first_visit_flag = np.zeros([nStates,])     # Set flag[state] = 1 when visited
     while nEpisodes < maxEpisodes:
         nVisits = 0
         episode_reward = 0
@@ -165,7 +166,7 @@ def main(maxEpisodes):
     plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
     
-main(500)
+main(1)
 
 # Prints out optimal direction of travel
 direction_matrix = np.empty(nStates,str)
