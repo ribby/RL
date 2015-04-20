@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 # Define Q-learning specific constants
 gamma = 1
-epsilon = 0.001 # Epsilon effectively equals 0.1%,
+epsilon = 0.1 # 0.2 returns uniform bottom values
 maxEpisodes = 100
 alpha = 0.1     # Played with values. 0.1 will return ballpark -50
 stopping = 1e-3
@@ -164,7 +164,8 @@ def main(maxEpisodes):
         diff_list.append(reward_list[i+1] - reward_list[i])
     plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
-main(50)
+    
+main(500)
 
 # Prints out optimal direction of travel
 direction_matrix = np.empty(nStates,str)
