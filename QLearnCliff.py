@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 gamma = 1
 epsilon = 0.001 # Epsilon effectively equals 0.1%,
 maxEpisodes = 100
-alpha = 0.5
+alpha = 0.1     # Played with values. 0.1 will return ballpark -50
 stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
@@ -71,10 +71,10 @@ def next_state(state, direction):
     '''
     global grid
     global start_state
-    if state in range(25,35):
+    if state in range(25,35):   # Above cliff
         if direction == 'v':
             return start_state
-    if state == 36:
+    if state == 36:             # Left of cliff
         if direction == '>':
             return start_state
     if direction == '<':
