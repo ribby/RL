@@ -151,8 +151,9 @@ def update_Q(state, direction):
 # action = next_action(state)[1]
 # state = next_state(state, action)
 # update_Q(state,action)
-# print "Update 2", Q, action, state
+# print "Update 2", Q[state], action, state
 #==============================================================================
+
 
 #==============================================================================
 # update_Q(35, 'v')
@@ -173,40 +174,37 @@ def main(maxEpisodes):
     maxVisits = 1000
     reward_list = []
     diff_list = []
+    path = []
     while nEpisodes < maxEpisodes:
         nVisits = 0
         episode_reward = 0
-        first_visit_flag = np.zeros([nStates,])     # Set flag[state] = 1 when visited
         action = next_action(start_state)[1]
         state = next_state(start_state, action)
         update_Q(start_state,action)
-        first_visit_flag[start_state] = 1
         while state != terminal_state and nVisits < maxVisits:
-            if first_visit_flag[state] == 0:
-                first_visit_flag[state] = 1
-                action = next_action(state)[1]
-                state = next_state(state, action)
-                update_Q(state,action)
-                nVisits += 1
-            else:
-                action = next_action(state)[1]
-                state = next_state(state, action)
-                nVisits += 1                
-        # Subtract all values of Q
+            action = next_action(state)[1]
+            state = next_state(state, action)
+            update_Q(state,action)
+            nVisits += 1
+            path.append(state)
+        # Subtract successive values of Q for reward list
         for i in xrange(nStates-1):
             for j in xrange(nActions):
                 episode_reward += Q[i][j]
         nEpisodes += 1
         reward_list.append(episode_reward)
+        print "The path was", path
     diff_list.append(reward_list[0])  # Arbitrary first value
     for i in xrange(len(reward_list)-1):
         diff_list.append(reward_list[i+1] - reward_list[i])
     plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
     
-main(250)
+    
+main(50)
 
 # Prints out optimal direction of travel
+
 direction_matrix = np.empty(nStates,str)
 for i in xrange(nStates):
     direction_matrix[i] = number_to_direction[np.argmax(Q[i])]
