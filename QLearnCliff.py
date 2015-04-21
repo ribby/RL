@@ -143,27 +143,24 @@ def update_Q(state, direction, state_prime, action_prime):
 # print Q
 #==============================================================================
 
-state = start_state
-action = next_action(start_state)[1]
-state_prime = next_state(state, action)
-action_prime = next_action(state_prime)[1]
-update_Q(state,action, state_prime, action_prime)
-print "Update 1", Q[state], action, state
-
-state = state_prime
-action = next_action(state)[1]
-state_prime = next_state(state, action)
-action_prime = next_action(state_prime)[1]
-update_Q(state,action, state_prime, action_prime)
-print "Update 2", Q[state], action, state
-
-while state != terminal_state:
-    state = state_prime
-    action = next_action(state)[1]
-    state_prime = next_state(state, action)
-    action_prime = next_action(state_prime)[1]
-    update_Q(state,action, state_prime, action_prime)
-    print "Update 3", Q[state], action, state
+#==============================================================================
+# i = 2
+# state = start_state
+# action = next_action(start_state)[1]
+# state_prime = next_state(state, action)
+# action_prime = next_action(state_prime)[1]
+# update_Q(state,action, state_prime, action_prime)
+# print "Update 1", Q[state], action, state
+# 
+# while state != terminal_state:
+#     state = state_prime
+#     action = next_action(state)[1]
+#     state_prime = next_state(state, action)
+#     action_prime = next_action(state_prime)[1]
+#     update_Q(state,action, state_prime, action_prime)
+#     print "Update", i, Q[state], action, state
+#==============================================================================
+#    i+= 1
 
 
 
@@ -193,23 +190,33 @@ def main(maxEpisodes):
     global terminal_state
     global temp
     nEpisodes = 0
-#    maxVisits = 1000
     reward_list = []
     diff_list = []
-#    path = []
     while nEpisodes < maxEpisodes:
-        nVisits = 0
         episode_reward = 0
+        state = start_state
         action = next_action(start_state)[1]
-        state = next_state(start_state, action)
-        update_Q(start_state,action)
+        state_prime = next_state(state, action)
+        action_prime = next_action(state_prime)[1]
+        update_Q(state,action, state_prime, action_prime)
         while state != terminal_state:
+            state = state_prime
             action = next_action(state)[1]
-            state = next_state(state, action)
-            update_Q(state,action)
-            nVisits += 1
-            print nVisits
-#            path.append(state)
+            state_prime = next_state(state, action)
+            action_prime = next_action(state_prime)[1]
+            update_Q(state,action, state_prime, action_prime)
+
+#==============================================================================
+#         action = next_action(start_state)[1]
+#         state = next_state(start_state, action)
+#         update_Q(start_state,action)
+#         while state != terminal_state:
+#             action = next_action(state)[1]
+#             state = next_state(state, action)
+#             update_Q(state,action)
+#             nVisits += 1
+#             print nVisits
+#==============================================================================
         # Subtract successive values of Q for reward list
         for i in xrange(nStates-1):
             for j in xrange(nActions):
@@ -224,7 +231,7 @@ def main(maxEpisodes):
     plt.show()
     
     
-main(1)
+main(250)
 
 # Prints out optimal direction of travel
 
