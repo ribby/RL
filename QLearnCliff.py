@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 gamma = 1
 epsilon = 0.1 # 0.2 returns uniform bottom values
 maxEpisodes = 100
-alpha = 0.1     # Played with values. 0.1 will return ballpark -50
+alpha = 0.01     # Played with values. 0.1 will return ballpark -50
 stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
@@ -142,15 +142,26 @@ def update_Q(state, direction):
 # print Q
 #==============================================================================
 
-action = next_action(start_state)[1]
-state = next_state(start_state, action)
-update_Q(start_state,action)
-print "Update 1", Q[36], action, start_state
+#==============================================================================
+# action = next_action(start_state)[1]
+# state = next_state(start_state, action)
+# update_Q(start_state,action)
+# print "Update 1", Q[36], action, start_state
+# 
+# action = next_action(state)[1]
+# state = next_state(state, action)
+# update_Q(state,action)
+# print "Update 2", Q, action, state
+#==============================================================================
 
-action = next_action(state)[1]
-state = next_state(state, action)
-update_Q(state,action)
-print "Update 2", Q, action, state
+#==============================================================================
+# update_Q(35, 'v')
+# update_Q(35, '>')
+# update_Q(35, '^')
+# update_Q(35, '<')
+# print Q[35]
+#==============================================================================
+
 #%%
 
 def main(maxEpisodes):
@@ -193,7 +204,7 @@ def main(maxEpisodes):
     plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
     
-main(5000)
+main(250)
 
 # Prints out optimal direction of travel
 direction_matrix = np.empty(nStates,str)
