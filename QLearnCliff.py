@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 gamma = 1
 epsilon = 0.1 # 0.2 returns uniform bottom values
 maxEpisodes = 100
-alpha = 0.01     # Played with values. 0.1 will return ballpark -50
+alpha = 0.1     # Played with values. 0.1 will return ballpark -50
 stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
@@ -171,29 +171,30 @@ def main(maxEpisodes):
     global terminal_state
     global temp
     nEpisodes = 0
-    maxVisits = 1000
+#    maxVisits = 1000
     reward_list = []
     diff_list = []
-    path = []
+#    path = []
     while nEpisodes < maxEpisodes:
         nVisits = 0
         episode_reward = 0
         action = next_action(start_state)[1]
         state = next_state(start_state, action)
         update_Q(start_state,action)
-        while state != terminal_state and nVisits < maxVisits:
+        while state != terminal_state:
             action = next_action(state)[1]
             state = next_state(state, action)
             update_Q(state,action)
             nVisits += 1
-            path.append(state)
+            print nVisits
+#            path.append(state)
         # Subtract successive values of Q for reward list
         for i in xrange(nStates-1):
             for j in xrange(nActions):
                 episode_reward += Q[i][j]
         nEpisodes += 1
         reward_list.append(episode_reward)
-        print "The path was", path
+#        print "The path was", path
     diff_list.append(reward_list[0])  # Arbitrary first value
     for i in xrange(len(reward_list)-1):
         diff_list.append(reward_list[i+1] - reward_list[i])
@@ -201,7 +202,7 @@ def main(maxEpisodes):
     plt.show()
     
     
-main(50)
+main(1)
 
 # Prints out optimal direction of travel
 
