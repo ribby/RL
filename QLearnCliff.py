@@ -15,11 +15,11 @@ KNOWN BUGS:
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Define Q-learning specific constants
+# Define Q-learning specific constants. Can mess with these to change plot shape.
 gamma = 1
-epsilon = 0.1 # 0.2 returns uniform bottom values
+epsilon = 0.1 
 maxEpisodes = 100
-alpha = 0.1     # Played with values. 0.1 will return ballpark -50
+alpha = 0.01     # Played with values. 0.1 will return ballpark -50
 stopping = 1e-3
 
 # Initializing the number of actions. Assuming same number of actions for all state
@@ -136,52 +136,6 @@ def update_Q(state, direction, state_prime, action_prime):
             - Q[state][direction_to_number[direction]])
         return
 
-#==============================================================================
-# print Q
-# update_Q(36, '^')
-# print "\n"
-# print Q
-#==============================================================================
-
-#==============================================================================
-# i = 2
-# state = start_state
-# action = next_action(start_state)[1]
-# state_prime = next_state(state, action)
-# action_prime = next_action(state_prime)[1]
-# update_Q(state,action, state_prime, action_prime)
-# print "Update 1", Q[state], action, state
-# 
-# while state != terminal_state:
-#     state = state_prime
-#     action = next_action(state)[1]
-#     state_prime = next_state(state, action)
-#     action_prime = next_action(state_prime)[1]
-#     update_Q(state,action, state_prime, action_prime)
-#     print "Update", i, Q[state], action, state
-#==============================================================================
-#    i+= 1
-
-
-
-#==============================================================================
-# action = next_action(state)[1]
-# state = next_state(state, action)
-# update_Q(state,action)
-# print "Update 2", Q[state], action, state
-#==============================================================================
-
-
-#==============================================================================
-# update_Q(35, 'v')
-# update_Q(35, '>')
-# update_Q(35, '^')
-# update_Q(35, '<')
-# print Q[35]
-#==============================================================================
-
-
-
 #%%
 
 def main(maxEpisodes):
@@ -191,7 +145,7 @@ def main(maxEpisodes):
     global temp
     nEpisodes = 0
     reward_list = []
-    diff_list = []
+    diff_list = [-50]   # First value chosen for nice plotting. Doesn't effect path.
     while nEpisodes < maxEpisodes:
         episode_reward = 0
         state = start_state
@@ -205,33 +159,18 @@ def main(maxEpisodes):
             state_prime = next_state(state, action)
             action_prime = next_action(state_prime)[1]
             update_Q(state,action, state_prime, action_prime)
-
-#==============================================================================
-#         action = next_action(start_state)[1]
-#         state = next_state(start_state, action)
-#         update_Q(start_state,action)
-#         while state != terminal_state:
-#             action = next_action(state)[1]
-#             state = next_state(state, action)
-#             update_Q(state,action)
-#             nVisits += 1
-#             print nVisits
-#==============================================================================
-        # Subtract successive values of Q for reward list
         for i in xrange(nStates-1):
             for j in xrange(nActions):
                 episode_reward += Q[i][j]
         nEpisodes += 1
         reward_list.append(episode_reward)
-#        print "The path was", path
-    diff_list.append(reward_list[0])  # Arbitrary first value
     for i in xrange(len(reward_list)-1):
         diff_list.append(reward_list[i+1] - reward_list[i])
     plt.plot(range(0, maxEpisodes), diff_list)
     plt.show()
     
     
-main(250)
+main(2500)  # 2500, ep = 0.1, alp = 0.01  returns 2nd row as optimal path
 
 # Prints out optimal direction of travel
 
