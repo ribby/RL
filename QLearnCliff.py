@@ -143,33 +143,41 @@ def main(maxEpisodes):
     global terminal_state
     global temp
     nEpisodes = 0
-    reward_list = []
-    diff_list = [-50]   # First value chosen for nice plotting. Doesn't effect path.
+#    reward_list = []
+#    diff_list = [-50]   # First value chosen for nice plotting. Doesn't effect path.
     while nEpisodes < maxEpisodes:
-        episode_reward = 0
+#        episode_reward = 0
         state = start_state
         action = next_action(start_state)[1]
         state_prime = next_state(state, action)
         action_prime = next_action(state_prime)[1]
         update_Q(state,action, state_prime, action_prime)
+        episode_reward = 0
         while state != terminal_state:
+            nEpisodes += 1
             state = state_prime
             action = next_action(state)[1]
             state_prime = next_state(state, action)
             action_prime = next_action(state_prime)[1]
             update_Q(state,action, state_prime, action_prime)
+            episode_reward += Q[state][direction_to_number[action]]
+            print "Episode reward", episode_reward
+                
+            
         # Plotting the reward per episode
-        for i in xrange(nStates-1):     
-            for j in xrange(nActions):
-                episode_reward += Q[i][j]
-        nEpisodes += 1
-        reward_list.append(episode_reward)
-    for i in xrange(len(reward_list)-1):
-        diff_list.append(reward_list[i+1] - reward_list[i])
-    plt.plot(range(0, maxEpisodes), diff_list)
-    plt.ylabel("Reward per episode")
-    plt.xlabel("Episode")
-    plt.show()
+#==============================================================================
+#         for i in xrange(nStates-1):     
+#             for j in xrange(nActions):
+#                 episode_reward += Q[i][j]
+#         nEpisodes += 1
+#         reward_list.append(episode_reward)
+#     for i in xrange(len(reward_list)-1):
+#         diff_list.append(reward_list[i+1] - reward_list[i])
+#     plt.plot(range(0, maxEpisodes), diff_list)
+#     plt.ylabel("Reward per episode")
+#     plt.xlabel("Episode")
+#==============================================================================
+#   plt.show()
     
     
 main(250)  # 2500, ep = 0.1, alp = 0.01  returns 2nd row as optimal path
