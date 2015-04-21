@@ -17,12 +17,12 @@ import matplotlib.pyplot as plt
 
 # Define Q-learning specific constants. Can mess with these to change plot shape.
 gamma = 1
-epsilon = 0.1 
+epsilon = 0.1       # ~10% of action is exploration
 maxEpisodes = 100
-alpha = 0.01     # Played with values. 0.1 will return ballpark -50
+alpha = 0.01        # Played with values. 0.1 will return ballpark -50
 stopping = 1e-3
 
-# Initializing the number of actions. Assuming same number of actions for all state
+# Initializing the number of actions. Assuming same number of actions for all states
 nActions = 4
 action = np.zeros(nActions,)
     
@@ -38,7 +38,7 @@ for i in grid:
     for j in i:
         Q[j] = action.copy()
         
-# Define cliff states and directions (to be used when changing states)
+# Define cliff states and direction dicts (to be used when taking actions)
 start_state = 36
 terminal_state = 47
 cliff = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46]
@@ -136,7 +136,6 @@ def update_Q(state, direction, state_prime, action_prime):
             - Q[state][direction_to_number[direction]])
         return
 
-#%%
 
 def main(maxEpisodes):
     global Q
@@ -159,7 +158,8 @@ def main(maxEpisodes):
             state_prime = next_state(state, action)
             action_prime = next_action(state_prime)[1]
             update_Q(state,action, state_prime, action_prime)
-        for i in xrange(nStates-1):
+        # Plotting the reward per episode
+        for i in xrange(nStates-1):     
             for j in xrange(nActions):
                 episode_reward += Q[i][j]
         nEpisodes += 1
@@ -167,10 +167,12 @@ def main(maxEpisodes):
     for i in xrange(len(reward_list)-1):
         diff_list.append(reward_list[i+1] - reward_list[i])
     plt.plot(range(0, maxEpisodes), diff_list)
+    plt.ylabel("Reward per episode")
+    plt.xlabel("Episode")
     plt.show()
     
     
-main(2500)  # 2500, ep = 0.1, alp = 0.01  returns 2nd row as optimal path
+main(250)  # 2500, ep = 0.1, alp = 0.01  returns 2nd row as optimal path
 
 # Prints out optimal direction of travel
 
