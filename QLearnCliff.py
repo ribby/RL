@@ -117,7 +117,7 @@ def reward(state, direction):
         return -1
 
 
-def update_Q(state, direction):
+def update_Q(state, direction, state_prime, action_prime):
     '''
     Updates one entry in Q, and returns the next state. Direction is an arrow.
     '''
@@ -131,7 +131,8 @@ def update_Q(state, direction):
         return terminal_state
     else:
         Q[state][direction_to_number[direction]] += \
-            alpha*(reward(state, direction) + gamma*next_action(state)[0] + \
+            alpha*(reward(state, direction) + \
+            + gamma*Q[state_prime][direction_to_number[action_prime]] + \
             - Q[state][direction_to_number[direction]])
         return
 
@@ -142,12 +143,31 @@ def update_Q(state, direction):
 # print Q
 #==============================================================================
 
+state = start_state
+action = next_action(start_state)[1]
+state_prime = next_state(state, action)
+action_prime = next_action(state_prime)[1]
+update_Q(state,action, state_prime, action_prime)
+print "Update 1", Q[state], action, state
+
+state = state_prime
+action = next_action(state)[1]
+state_prime = next_state(state, action)
+action_prime = next_action(state_prime)[1]
+update_Q(state,action, state_prime, action_prime)
+print "Update 2", Q[state], action, state
+
+while state != terminal_state:
+    state = state_prime
+    action = next_action(state)[1]
+    state_prime = next_state(state, action)
+    action_prime = next_action(state_prime)[1]
+    update_Q(state,action, state_prime, action_prime)
+    print "Update 3", Q[state], action, state
+
+
+
 #==============================================================================
-# action = next_action(start_state)[1]
-# state = next_state(start_state, action)
-# update_Q(start_state,action)
-# print "Update 1", Q[36], action, start_state
-# 
 # action = next_action(state)[1]
 # state = next_state(state, action)
 # update_Q(state,action)
@@ -162,6 +182,8 @@ def update_Q(state, direction):
 # update_Q(35, '<')
 # print Q[35]
 #==============================================================================
+
+
 
 #%%
 
